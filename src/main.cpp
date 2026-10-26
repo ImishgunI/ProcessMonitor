@@ -4,6 +4,9 @@
 
 #include "InfoParser.hpp"
 
+void bench_first();
+void bench_second();
+
 int main() {
   std::cout << std::flush;
   CpuCoresInfo cci{};
@@ -16,5 +19,18 @@ int main() {
       cci.softirq, cci.steal, cci.guest, cci.guest_nice);
 
   cpu_parser.findAmountOfSiblings();
-  std::cout << cpu_parser.getSiblings();
+  std::cout << cpu_parser.getSiblings() << '\n';
+
+  MemInfo mi{};
+  MemParser mem_parser{};
+  mem_parser.fillUMap();
+  mem_parser.fillMI(mi);
+  std::cout << std::format(
+      "MemTotal: {}   MemFree: {}   MemAvailable: {}  Cached: {}  SwapCached: {} \
+            SwapTotal: {} SwapFree: {}\n",
+      mi.mem_total, mi.mem_free, mi.mem_available, mi.cached, mi.swap_cached,
+      mi.swap_total, mi.swap_free);
+
+  bench_first();
+  bench_second();
 }
