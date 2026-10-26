@@ -29,6 +29,14 @@ struct CpuCoresInfo {
     uint32_t guest_nice = 0;
 };
 
+struct MemInfo {
+    uint64_t mem_total = 0;
+    uint64_t mem_free = 0;
+    uint64_t mem_available = 0;
+    uint64_t cached = 0;
+    uint64_t swap_cached = 0;
+};
+
 
 class CpuParser {
 private:
@@ -46,5 +54,11 @@ public:
 };
 
 class MemParser {
+private:
+    std::ifstream reader;
+public:
+    MemParser();
+    ~MemParser();
 
+    void fillMI(MemInfo& mi);
 };
