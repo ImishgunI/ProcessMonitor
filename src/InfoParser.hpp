@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <fstream>
+#include <unordered_map>
 
 /*
  *  The structure contains information about an individual CPU thread.
@@ -35,6 +36,8 @@ struct MemInfo {
     uint64_t mem_available = 0;
     uint64_t cached = 0;
     uint64_t swap_cached = 0;
+    uint64_t swap_total = 0;
+    uint64_t swap_free = 0;
 };
 
 
@@ -56,9 +59,11 @@ public:
 class MemParser {
 private:
     std::ifstream reader;
+    std::unordered_map<std::string, uint64_t> mp {};
 public:
     MemParser();
     ~MemParser();
 
     void fillMI(MemInfo& mi);
+    void fillUMap();
 };
