@@ -1,11 +1,11 @@
 #pragma once
 
 #include <cstdint>
-#include <format>
 #include <fstream>
-#include <iostream>
 #include <unordered_map>
 #include <vector>
+
+class InfoParser;
 
 /*
  *  The structure contains information about an individual CPU thread.
@@ -43,71 +43,99 @@ struct MemInfo {
   uint64_t swap_free = 0;
 };
 
+struct UptimeInfo {
+    float system_up = 0.0f;
+    float idle = 0.0f;
+};
+
+struct LoadAvgInfo {
+    float first_min = 0.0f;
+    float fifth_min = 0.0f;
+    float fifteenth_min = 0.0f;
+    uint16_t ready_obj = 0;
+    uint32_t amount_of_obj = 0;
+    uint32_t last_pid = 0;
+};
+
 class CpuParser {
 private:
   std::ifstream reader;
   int siblings = 0;
+  std::vector<CpuCoresInfo> cci{};
 
-public:
   CpuParser();
   ~CpuParser();
 
-  void fillCCI(std::vector<CpuCoresInfo>& cci);
+  void fillCCI();
   int findAmountOfSiblings();
-  int getSiblings() { return siblings; }
+
+  friend class InfoParser;
 };
 
 class MemParser {
 private:
   std::ifstream reader;
   std::unordered_map<std::string, uint64_t> mp{};
+  MemInfo mi{};
 
-public:
   MemParser();
   ~MemParser();
 
-  void fillMI(MemInfo &mi);
+  void fillMI();
   void fillUMap();
+
+  friend class InfoParser;
 };
 
 class UptimeParser {
 private:
   std::ifstream reader;
-  float system_up = 0.0f;
-  float idle = 0.0f;
+  UptimeInfo ui{};
 
-public:
   UptimeParser();
   ~UptimeParser();
 
   void read();
 
-  float getSystemUp() { return system_up; }
-
-  float getIdle() { return idle; }
+  friend class InfoParser;
 };
 
 class LoadAvgParser {
 private:
   std::ifstream reader;
-  float first_min = 0.0f;
-  float fifth_min = 0.0f;
-  float fifteenth_min = 0.0f;
-  uint16_t ready_obj = 0;
-  uint16_t amount_of_obj = 0;
-  uint32_t last_pid = 0;
+  LoadAvgInfo lai{};
 
-public:
   LoadAvgParser();
   ~LoadAvgParser();
 
   void read();
 
-  void print() {
-    std::cout << std::format(
-        "First minute: {}  Fifth minute: {}    Fifteenth minute: {}   \
-                Ready Objects: {}   Amount Of Objects: {}   Last PID: {}\n",
-        first_min, fifth_min, fifteenth_min, ready_obj, amount_of_obj,
-        last_pid);
-  }
+  friend class InfoParser;
+};
+
+class InfoParser {
+private:
+    CpuParser cp{};
+    MemParser mp{};
+    UptimeParser up{};
+    LoadAvgParser lap{};
+
+public:
+    const std::vector<CpuCoresInfo>& getCCIVector() const {
+        return this->cp.cci;
+    }
+
+    const MemInfo& getMemInfo() const {
+        return this->mp.mi;
+    }
+
+    const UptimeInfo& getUptimeInfo() const {
+        return this->up.ui;
+    }
+
+    const LoadAvgInfo& getLoadAvgInfo() const {
+        return this->lap.lai;
+    }
+
+    void update();
 };
