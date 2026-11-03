@@ -1,7 +1,6 @@
 #include "InfoParser.hpp"
 
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -95,4 +94,22 @@ void MemParser::fillUMap() {
     }
     index++;
   }
+}
+
+UptimeParser::UptimeParser() {
+    reader.open("/proc/uptime", std::ios::in);
+    if (!reader.is_open()) {
+        std::cerr << "Failed to open file: /proc/uptime";
+    }
+}
+
+UptimeParser::~UptimeParser() {
+    reader.close();
+}
+
+void UptimeParser::read() {
+    std::string line;
+    std::getline(reader, line);
+    std::istringstream iss(line);
+    iss >> system_up >> idle;
 }
