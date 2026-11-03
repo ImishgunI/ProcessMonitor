@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 
 /*
  *  The structure contains information about an individual CPU thread.
@@ -51,7 +52,7 @@ public:
   CpuParser();
   ~CpuParser();
 
-  void fillCCI(CpuCoresInfo &cci);
+  void fillCCI(std::vector<CpuCoresInfo>& cci);
   int findAmountOfSiblings();
   int getSiblings() { return siblings; }
 };
