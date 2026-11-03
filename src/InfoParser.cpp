@@ -15,10 +15,11 @@ CpuParser::CpuParser() {
 
 CpuParser::~CpuParser() { reader.close(); }
 
-void CpuParser::fillCCI(std::vector<CpuCoresInfo>& cci) {
+void CpuParser::fillCCI() {
   if (findAmountOfSiblings() != 0) {
       std::cerr << "siblings is zero";
   }
+  cci.resize(siblings + 1);
   std::string line;
   while(std::getline(reader, line)) {
       CpuCoresInfo element{};
@@ -64,7 +65,7 @@ MemParser::MemParser() {
 
 MemParser::~MemParser() { reader.close(); }
 
-void MemParser::fillMI(MemInfo &mi) {
+void MemParser::fillMI() {
   mi.mem_total = mp.at("MemTotal");
   mi.mem_free = mp.at("MemFree");
   mi.mem_available = mp.at("MemAvailable");
@@ -115,7 +116,7 @@ void UptimeParser::read() {
   std::string line;
   std::getline(reader, line);
   std::istringstream iss(line);
-  iss >> system_up >> idle;
+  iss >> ui.system_up >> ui.idle;
 }
 
 LoadAvgParser::LoadAvgParser() {
@@ -131,7 +132,15 @@ void LoadAvgParser::read() {
   std::string line;
   std::getline(reader, line);
   std::istringstream iss(line);
-  iss >> first_min >> fifth_min >> fifteenth_min >> ready_obj;
+  iss >> lai.first_min >> lai.fifth_min >> lai.fifteenth_min >> lai.ready_obj;
   iss.ignore();
-  iss >> amount_of_obj >> last_pid;
+  iss >> lai.amount_of_obj >> lai.last_pid;
+}
+
+void InfoParser::update() {
+    cp.fillCCI();
+    mp.fillUMap();
+    mp.fillMI();
+    up.read();
+    lap.read();
 }
