@@ -4,8 +4,8 @@
 
 #include "InfoParser.hpp"
 
-void bench_first();
-void bench_second();
+// void bench_first();
+// void bench_second();
 
 int main() {
   std::cout << std::flush;
@@ -27,10 +27,19 @@ int main() {
   mem_parser.fillMI(mi);
   std::cout << std::format(
       "MemTotal: {}   MemFree: {}   MemAvailable: {}  Cached: {}  SwapCached: {} \
-            SwapTotal: {} SwapFree: {}\n",
+SwapTotal: {}   SwapFree: {}\n",
       mi.mem_total, mi.mem_free, mi.mem_available, mi.cached, mi.swap_cached,
       mi.swap_total, mi.swap_free);
 
-  bench_first();
-  bench_second();
+  UptimeParser upp{};
+  upp.read();
+
+  std::cout << std::format("System Up: {}  Idle: {}\n", upp.getSystemUp(),
+                           upp.getIdle());
+
+  LoadAvgParser lap{};
+  lap.read();
+  lap.print();
+  // bench_first();
+  // bench_second();
 }
