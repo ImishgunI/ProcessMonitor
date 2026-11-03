@@ -5,6 +5,7 @@
 #include <regex>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 CpuParser::CpuParser() {
   reader.open("/proc/stat", std::ios::in);
@@ -97,19 +98,35 @@ void MemParser::fillUMap() {
 }
 
 UptimeParser::UptimeParser() {
-    reader.open("/proc/uptime", std::ios::in);
-    if (!reader.is_open()) {
-        std::cerr << "Failed to open file: /proc/uptime";
-    }
+  reader.open("/proc/uptime", std::ios::in);
+  if (!reader.is_open()) {
+    std::cerr << "Failed to open file: /proc/uptime";
+  }
 }
 
-UptimeParser::~UptimeParser() {
-    reader.close();
-}
+UptimeParser::~UptimeParser() { reader.close(); }
 
 void UptimeParser::read() {
-    std::string line;
-    std::getline(reader, line);
-    std::istringstream iss(line);
-    iss >> system_up >> idle;
+  std::string line;
+  std::getline(reader, line);
+  std::istringstream iss(line);
+  iss >> system_up >> idle;
+}
+
+LoadAvgParser::LoadAvgParser() {
+  reader.open("/proc/loadavg", std::ios::in);
+  if (!reader.is_open()) {
+    std::cerr << "Failed to open file: /proc/loadavg";
+  }
+}
+
+LoadAvgParser::~LoadAvgParser() { reader.close(); }
+
+void LoadAvgParser::read() {
+  std::string line;
+  std::getline(reader, line);
+  std::istringstream iss(line);
+  iss >> first_min >> fifth_min >> fifteenth_min >> ready_obj;
+  iss.ignore();
+  iss >> amount_of_obj >> last_pid;
 }
