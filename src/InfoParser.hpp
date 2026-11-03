@@ -67,3 +67,15 @@ public:
     void fillMI(MemInfo& mi);
     void fillUMap();
 };
+
+class UptimeParser {
+private:
+    std::ifstream reader;
+    float system_up = 0.0f;
+    float idle = 0.0f;
+public:
+    UptimeParser();
+    ~UptimeParser();
+
+    void read();
+};
