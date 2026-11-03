@@ -5,7 +5,6 @@
 #include <regex>
 #include <sstream>
 #include <string>
-#include <string_view>
 
 CpuParser::CpuParser() {
   reader.open("/proc/stat", std::ios::in);
@@ -16,21 +15,27 @@ CpuParser::CpuParser() {
 
 CpuParser::~CpuParser() { reader.close(); }
 
-void CpuParser::fillCCI(CpuCoresInfo &cci) {
+void CpuParser::fillCCI(std::vector<CpuCoresInfo>& cci) {
+  if (findAmountOfSiblings() != 0) {
+      std::cerr << "siblings is zero";
+  }
   std::string line;
-  std::getline(reader, line);
-  line = line.substr(line.find_first_of(" \t") + 1);
-  std::stringstream ss(line);
-  ss >> cci.user;
-  ss >> cci.nice;
-  ss >> cci.system;
-  ss >> cci.idle;
-  ss >> cci.iowait;
-  ss >> cci.irq;
-  ss >> cci.softirq;
-  ss >> cci.steal;
-  ss >> cci.guest;
-  ss >> cci.guest_nice;
+  while(std::getline(reader, line)) {
+      CpuCoresInfo element{};
+      line = line.substr(line.find_first_of(" \t") + 1);
+      std::stringstream ss(line);
+      ss >> element.user;
+      ss >> element.nice;
+      ss >> element.system;
+      ss >> element.idle;
+      ss >> element.iowait;
+      ss >> element.irq;
+      ss >> element.softirq;
+      ss >> element.steal;
+      ss >> element.guest;
+      ss >> element.guest_nice;
+      cci.push_back(element);
+    }
 }
 
 int CpuParser::findAmountOfSiblings() {
