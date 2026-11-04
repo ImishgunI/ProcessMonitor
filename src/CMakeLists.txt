@@ -6,11 +6,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 project(ProcessMonitor)
 
-add_executable(ProcessMonitor)
+add_library(ProcessMonitorLib STATIC InfoParser.hpp InfoParser.cpp)
 
-target_sources(ProcessMonitor
-    PRIVATE
-        main.cpp
-        InfoParser.cpp
-        InfoParser.hpp
-)
+set(ProcessMonitor StaticTest)
+
+add_executable(${ProcessMonitor} main.cpp)
+
+target_link_libraries(${ProcessMonitor} ProcessMonitorLib)
