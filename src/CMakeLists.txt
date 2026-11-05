@@ -7,9 +7,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 project(ProcessMonitor)
 
 set (
-    SOURCES_LIB
-    InfoParser.cpp
-    InfoParser.hpp
+    INFOPARSER_LIB
+    lib/InfoParser.cpp
+    lib/InfoParser.hpp
 )
 
-add_library(ProcessMonitor STATIC ${SOURCES_LIB})
+add_library(InfoParser STATIC ${INFOPARSER_LIB})
